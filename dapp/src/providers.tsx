@@ -10,7 +10,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isInitialized.current) return
     isInitialized.current = true
-    
     setMounted(true)
   }, [])
 
@@ -46,12 +45,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
         apiAddress: "https://devnet-api.multiversx.com",
         explorerAddress: "http://devnet-explorer.multiversx.com",
         chainId: "D",
-        walletConnectV2ProjectId: "3242aaa9e77cb94ec2613a57584fe4f6",
+        walletConnectV2ProjectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "",
       }}
       dappConfig={{
         shouldUseWebViewProvider: true,
       }}
-            customComponents={{
+      customComponents={{
         transactionTracker: {
           props: {
             onSuccess: (sessionId: string) => {

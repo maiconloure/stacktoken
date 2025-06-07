@@ -1,11 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { WalletModal } from '@/components/wallet/WalletModal';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Search, Menu, Sun, Moon, Globe, Wallet, Image } from 'lucide-react';
+import { Search, Menu, Sun, Moon, Globe, Wallet } from 'lucide-react';
 import { useGetAccountInfo, useGetLoginInfo, useGetNetworkConfig } from "@multiversx/sdk-dapp/hooks"
 import { logout } from "@multiversx/sdk-dapp/utils"
 import { FormatAmount } from '@multiversx/sdk-dapp/UI';
@@ -15,10 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const callbackUrl = `${window.location.origin}/`;
-const onRedirect = undefined; // use this to redirect with useNavigate to a specific page after logout
-const shouldAttemptReLogin = false; // use for special cases where you want to re-login after logout
 
 export const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -39,15 +34,7 @@ export const Header: React.FC = () => {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    logout(
-      callbackUrl,
-      onRedirect,
-      shouldAttemptReLogin,
-      {
-        shouldBroadcastLogoutAcrossTabs: true,
-        hasConsentPopup: false
-      }
-    );
+    logout()
   };
 
   return (
@@ -83,7 +70,7 @@ export const Header: React.FC = () => {
                     <Wallet className="h-4 w-4" />
                     <div className="text-left">
                       <div className="text-xs">{address ?? 'N/A'}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-sm text-gray-500">
                         <FormatAmount
                           value={account?.balance ?? '0'}
                           showLabel={account?.balance !== '0'}

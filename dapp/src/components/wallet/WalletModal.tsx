@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import { Wallet } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -5,10 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useTranslation } from 'react-i18next';
-import { Wallet } from 'lucide-react';
-import { useGetIsLoggedIn, useGetAccountInfo } from "@multiversx/sdk-dapp/hooks"
-import { logout } from "@multiversx/sdk-dapp/utils"
 import {
   WebWalletLoginButton,
   MetamaskLoginButton,
@@ -19,12 +17,6 @@ export const WalletModal = ({
   onOpenChange,
 }) => {
   const { t } = useTranslation();
-  const isLoggedIn = useGetIsLoggedIn()
-  const { address } = useGetAccountInfo()
-
-  const handleLogout = () => {
-    logout()
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -40,6 +32,7 @@ export const WalletModal = ({
         </DialogHeader>
         
         <div className="space-y-3 mt-4">
+          <WebWalletLoginButton callbackRoute="/questions" />
           <MetamaskLoginButton callbackRoute="/questions" />
         </div>
 

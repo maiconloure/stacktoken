@@ -14,50 +14,33 @@ import { QuestionCard } from './QuestionCard';
 import { useTranslation } from 'react-i18next';
 import { Search, Filter, Plus } from 'lucide-react';
 
-// Mock data for demonstration
 const mockQuestions = [
   {
     id: '1',
     title: 'How to implement smart contract interactions with MultiversX SDK?',
     description: 'I\'m trying to connect my React app to a MultiversX smart contract but getting errors when calling contract methods. The connection works but method calls fail.',
-    tags: ['multiversx', 'smart-contracts', 'react', 'sdk'],
-    author: 'developer123',
+    creator: 'developer123',
     votes: 15,
     answers: 3,
     views: 234,
     reward: 0.5,
+    status: 'Created',
     deadline: '2024-01-15T18:00:00Z',
-    status: 'open' as const,
     createdAt: '2024-01-10T10:30:00Z'
   },
   {
     id: '2',
     title: 'Best practices for token staking mechanisms in DeFi protocols?',
     description: 'Looking for architectural advice on implementing a token staking system. Need to handle rewards distribution, slashing conditions, and withdrawal periods.',
-    tags: ['defi', 'staking', 'tokenomics', 'smart-contracts'],
-    author: 'defi_builder',
+    creator: 'defi_builder',
     votes: 28,
     answers: 7,
     views: 456,
     reward: 1.2,
+    status: 'Answered',
     deadline: '2024-01-12T12:00:00Z',
-    status: 'answered' as const,
     createdAt: '2024-01-08T14:20:00Z'
   },
-  {
-    id: '3',
-    title: 'Error handling in Lexical editor for rich text features',
-    description: 'Having issues with custom node implementations in Lexical. Code blocks and link insertions are causing crashes in production.',
-    tags: ['lexical', 'react', 'editor', 'javascript'],
-    author: 'frontend_dev',
-    votes: 8,
-    answers: 2,
-    views: 123,
-    reward: 0.3,
-    deadline: '2024-01-20T09:00:00Z',
-    status: 'open' as const,
-    createdAt: '2024-01-11T16:45:00Z'
-  }
 ];
 
 export const QuestionsList: React.FC = () => {
@@ -70,8 +53,7 @@ export const QuestionsList: React.FC = () => {
   const filteredQuestions = questions
     .filter(question => {
       const matchesSearch = question.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          question.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          question.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+                          question.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || question.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
@@ -129,7 +111,6 @@ export const QuestionsList: React.FC = () => {
           </SelectContent>
         </Select>
 
-        {/* Sort */}
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort by" />
@@ -142,7 +123,6 @@ export const QuestionsList: React.FC = () => {
         </Select>
       </div>
 
-      {/* Active Filters */}
       {(searchTerm || statusFilter !== 'all') && (
         <div className="flex items-center space-x-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
