@@ -1,0 +1,355 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.87.0",
+            "commitHash": "17067e9ac6d7ecb70e50f92c1944e545188d2359",
+            "commitDate": "2025-05-09",
+            "channel": "Stable",
+            "short": "rustc 1.87.0 (17067e9ac 2025-05-09)"
+        },
+        "contractCrate": {
+            "name": "stacktoken",
+            "version": "0.0.0"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.58.0"
+        }
+    },
+    "name": "StackTokenContract",
+    "constructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "postQuestion",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [
+                {
+                    "name": "title",
+                    "type": "bytes"
+                },
+                {
+                    "name": "description",
+                    "type": "bytes"
+                },
+                {
+                    "name": "deadline",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "submitAnswer",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                },
+                {
+                    "name": "title",
+                    "type": "bytes"
+                },
+                {
+                    "name": "description",
+                    "type": "bytes"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "approveAnswer",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                },
+                {
+                    "name": "answer_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "refundQuestion",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getAllOpenQuestions",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "variadic<Question>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getQuestionDetails",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "optional<Question>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getAnswersForQuestion",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "variadic<Answer>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getQuestionsByStatus",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "status",
+                    "type": "QuestionStatus"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "variadic<Question>",
+                    "multi_result": true
+                }
+            ]
+        },
+        {
+            "name": "getExpiredQuestions",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "variadic<Question>",
+                    "multi_result": true
+                }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "identifier": "question_created",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "creator",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "data",
+                    "type": "QuestionCreatedEventData"
+                }
+            ]
+        },
+        {
+            "identifier": "answer_submitted",
+            "inputs": [
+                {
+                    "name": "answer_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "question_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "creator",
+                    "type": "Address",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "answer_approved",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "answer_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "rewarded_user",
+                    "type": "Address",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "tokens_refunded",
+            "inputs": [
+                {
+                    "name": "question_id",
+                    "type": "u64",
+                    "indexed": true
+                },
+                {
+                    "name": "creator",
+                    "type": "Address",
+                    "indexed": true
+                }
+            ]
+        }
+    ],
+    "esdtAttributes": [],
+    "hasCallback": false,
+    "types": {
+        "Answer": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "answer_id",
+                    "type": "u64"
+                },
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                },
+                {
+                    "name": "creator",
+                    "type": "Address"
+                },
+                {
+                    "name": "title",
+                    "type": "bytes"
+                },
+                {
+                    "name": "description",
+                    "type": "bytes"
+                },
+                {
+                    "name": "created_at",
+                    "type": "u64"
+                },
+                {
+                    "name": "votes",
+                    "type": "u32"
+                },
+                {
+                    "name": "approved_by_creator",
+                    "type": "bool"
+                }
+            ]
+        },
+        "Question": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "question_id",
+                    "type": "u64"
+                },
+                {
+                    "name": "creator",
+                    "type": "Address"
+                },
+                {
+                    "name": "title",
+                    "type": "bytes"
+                },
+                {
+                    "name": "description",
+                    "type": "bytes"
+                },
+                {
+                    "name": "deadline",
+                    "type": "u64"
+                },
+                {
+                    "name": "locked_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "created_at",
+                    "type": "u64"
+                },
+                {
+                    "name": "status",
+                    "type": "QuestionStatus"
+                },
+                {
+                    "name": "approved_answer_id",
+                    "type": "Option<u64>"
+                }
+            ]
+        },
+        "QuestionCreatedEventData": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "deadline",
+                    "type": "u64"
+                },
+                {
+                    "name": "locked_amount",
+                    "type": "BigUint"
+                }
+            ]
+        },
+        "QuestionStatus": {
+            "type": "enum",
+            "variants": [
+                {
+                    "name": "Created",
+                    "discriminant": 0
+                },
+                {
+                    "name": "Answered",
+                    "discriminant": 1
+                },
+                {
+                    "name": "AnswerApproved",
+                    "discriminant": 2
+                },
+                {
+                    "name": "Expired",
+                    "discriminant": 3
+                }
+            ]
+        }
+    }
+}
