@@ -8,7 +8,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const isInitialized = useRef(false)
 
   useEffect(() => {
-    // Evitar dupla inicialização
     if (isInitialized.current) return
     isInitialized.current = true
     
@@ -17,7 +16,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   console.log("Providers mounted:", isInitialized)
 
-  // Não renderizar nada até estar montado no cliente
   if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
@@ -55,8 +53,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
             customComponents={{
         transactionTracker: {
-          // uncomment this to use the custom transaction tracker
-          // component: TransactionsTracker,
           props: {
             onSuccess: (sessionId: string) => {
               console.log(`Session ${sessionId} successfully completed`);

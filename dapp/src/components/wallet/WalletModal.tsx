@@ -9,11 +9,9 @@ import { useTranslation } from 'react-i18next';
 import { Wallet } from 'lucide-react';
 import { useGetIsLoggedIn, useGetAccountInfo } from "@multiversx/sdk-dapp/hooks"
 import { logout } from "@multiversx/sdk-dapp/utils"
-import { 
-  LedgerLoginButton, 
-  CrossWindowLoginButton,
+import {
+  WebWalletLoginButton,
   MetamaskLoginButton,
-  ExtensionLoginButton
 } from "@multiversx/sdk-dapp/UI"
 
 export const WalletModal = ({
@@ -21,11 +19,8 @@ export const WalletModal = ({
   onOpenChange,
 }) => {
   const { t } = useTranslation();
-
-   const isLoggedIn = useGetIsLoggedIn()
+  const isLoggedIn = useGetIsLoggedIn()
   const { address } = useGetAccountInfo()
-
-  console.log(isLoggedIn, address)
 
   const handleLogout = () => {
     logout()
@@ -45,9 +40,6 @@ export const WalletModal = ({
         </DialogHeader>
         
         <div className="space-y-3 mt-4">
-          {/* <WebWalletLoginButton callbackRoute="/questions" /> */}
-          <LedgerLoginButton callbackRoute="/questions" />
-          <ExtensionLoginButton callbackRoute="/questions" />
           <MetamaskLoginButton callbackRoute="/questions" />
         </div>
 

@@ -2,18 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { WalletModal } from '@/components/wallet/WalletModal';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Search, Menu, Sun, Moon, Globe, Wallet, Image } from 'lucide-react';
+import { useGetAccountInfo, useGetLoginInfo, useGetNetworkConfig } from "@multiversx/sdk-dapp/hooks"
+import { logout } from "@multiversx/sdk-dapp/utils"
+import { FormatAmount } from '@multiversx/sdk-dapp/UI';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { WalletModal } from '@/components/wallet/WalletModal';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Search, Menu, Sun, Moon, Globe, Wallet, Image } from 'lucide-react';
-import { useGetAccountInfo, useGetLoginInfo } from "@multiversx/sdk-dapp/hooks"
-import { logout } from "@multiversx/sdk-dapp/utils"
 
 const callbackUrl = `${window.location.origin}/`;
 const onRedirect = undefined; // use this to redirect with useNavigate to a specific page after logout
@@ -22,15 +23,10 @@ const shouldAttemptReLogin = false; // use for special cases where you want to r
 export const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
-
-  const { tokenLogin, isLoggedIn } = useGetLoginInfo();
+  const { isLoggedIn } = useGetLoginInfo();
   const { address, account } = useGetAccountInfo()
-
+  const { network } = useGetNetworkConfig();
   const [showWalletModal, setShowWalletModal] = useState(false);
-
-  console.log(isLoggedIn)
-  console.log(account)
-  console.log(address)
 
   useEffect(() => {
     console.log('Header mounted');
@@ -39,16 +35,6 @@ export const Header: React.FC = () => {
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
     localStorage.setItem('language', lng);
-  };
-
-  const formatAddress = (addr: string) => {
-    if (!addr) return '';
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
-
-  const formatBalance = (bal: string) => {
-    if (!bal) return '0';
-    return parseFloat(bal).toFixed(4);
   };
 
   const handleLogout = () => {
@@ -96,9 +82,14 @@ export const Header: React.FC = () => {
                   <Button variant="outline" className="flex items-center space-x-2">
                     <Wallet className="h-4 w-4" />
                     <div className="text-left">
-                      <div className="text-xs">{formatAddress(address ?? 'N/A')}</div>
+                      <div className="text-xs">{address ?? 'N/A'}</div>
                       <div className="text-xs text-muted-foreground">
-                        {formatBalance(account?.balance ?? '0')} EGLD
+                        <FormatAmount
+                          value={account?.balance ?? '0'}
+                          showLabel={account?.balance !== '0'}
+                          egldLabel={network.egldLabel}
+                          data-testid='balance'
+                        />
                       </div>
                     </div>
                   </Button>
@@ -115,7 +106,6 @@ export const Header: React.FC = () => {
                 className="stack-gradient text-white"
               >
                 <Wallet className="h-4 w-4 mr-2" />
-                {/* {isLoading ? 'Connecting...' : t('wallet.connect')} */}
               </Button>
             )}
 

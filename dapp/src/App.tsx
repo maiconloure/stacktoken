@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,8 +8,8 @@ import Index from "./pages/Index";
 import Questions from "./pages/Questions";
 import AskQuestion from "./pages/AskQuestion";
 import NotFound from "./pages/NotFound";
-import "./lib/i18n";
 import { Providers } from "./providers";
+import "./lib/i18n";
 
 const queryClient = new QueryClient();
 

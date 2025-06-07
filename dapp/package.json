@@ -7,8 +7,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "npm run copy:devnet-config & vite dev",
-    "copy:devnet-config": "cp ./src/config/config.devnet.ts ./src/config/index.ts",
+    "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

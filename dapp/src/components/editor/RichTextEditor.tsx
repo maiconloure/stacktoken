@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { $getRoot, $getSelection, EditorState } from 'lexical';
+import {  EditorState } from 'lexical';
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
