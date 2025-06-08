@@ -9,7 +9,7 @@
         },
         "contractCrate": {
             "name": "stacktoken",
-            "version": "0.0.0"
+            "version": "0.0.1"
         },
         "framework": {
             "name": "multiversx-sc",
@@ -158,6 +158,88 @@
                     "multi_result": true
                 }
             ]
+        },
+        {
+            "name": "pauseContract",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "unpauseContract",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [],
+            "outputs": []
+        },
+        {
+            "name": "transferOwnership",
+            "onlyOwner": true,
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "new_owner",
+                    "type": "Address"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getOwner",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "Address"
+                }
+            ]
+        },
+        {
+            "name": "isPaused",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "getTotalQuestions",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "getTotalAnswers",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
+                }
+            ]
+        },
+        {
+            "name": "getContractStats",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "u64"
+                },
+                {
+                    "type": "u64"
+                },
+                {
+                    "type": "bool"
+                }
+            ]
         }
     ],
     "events": [
@@ -230,6 +312,29 @@
                 },
                 {
                     "name": "creator",
+                    "type": "Address",
+                    "indexed": true
+                }
+            ]
+        },
+        {
+            "identifier": "contract_paused",
+            "inputs": []
+        },
+        {
+            "identifier": "contract_unpaused",
+            "inputs": []
+        },
+        {
+            "identifier": "ownership_transferred",
+            "inputs": [
+                {
+                    "name": "old_owner",
+                    "type": "Address",
+                    "indexed": true
+                },
+                {
+                    "name": "new_owner",
                     "type": "Address",
                     "indexed": true
                 }
