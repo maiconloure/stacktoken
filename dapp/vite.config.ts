@@ -8,7 +8,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig(({ mode }) => ({
   server: {
     host: true,
-    port: 8080,
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : 8080,
     strictPort: true,
     watch: {
       usePolling: false,
