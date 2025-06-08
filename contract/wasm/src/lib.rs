@@ -5,9 +5,9 @@
 ////////////////////////////////////////////////////
 
 // Init:                                 1
-// Endpoints:                           17
+// Endpoints:                           16
 // Async Callback (empty):               1
-// Total number of exported functions:  19
+// Total number of exported functions:  18
 
 #![no_std]
 
@@ -22,11 +22,10 @@ multiversx_sc_wasm_adapter::endpoints! {
         submitAnswer => submit_answer
         approveAnswer => approve_answer
         refundQuestion => refund_question
+        expireQuestions => expire_questions
         getAllOpenQuestions => get_all_open_questions
         getQuestionDetails => get_question_details
         getAnswersForQuestion => get_answers_for_question
-        getQuestionsByStatus => get_questions_by_status
-        getExpiredQuestions => get_expired_questions
         pauseContract => pause_contract
         unpauseContract => unpause_contract
         transferOwnership => transfer_ownership

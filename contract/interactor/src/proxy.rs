@@ -128,6 +128,15 @@ where
             .original_result()
     }
 
+    pub fn expire_questions(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("expireQuestions")
+            .original_result()
+    }
+
     pub fn get_all_open_questions(
         self,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, MultiValueEncoded<Env::Api, Question<Env::Api>>> {
@@ -160,28 +169,6 @@ where
             .payment(NotPayable)
             .raw_call("getAnswersForQuestion")
             .argument(&question_id)
-            .original_result()
-    }
-
-    pub fn get_questions_by_status<
-        Arg0: ProxyArg<QuestionStatus>,
-    >(
-        self,
-        status: Arg0,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, MultiValueEncoded<Env::Api, Question<Env::Api>>> {
-        self.wrapped_tx
-            .payment(NotPayable)
-            .raw_call("getQuestionsByStatus")
-            .argument(&status)
-            .original_result()
-    }
-
-    pub fn get_expired_questions(
-        self,
-    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, MultiValueEncoded<Env::Api, Question<Env::Api>>> {
-        self.wrapped_tx
-            .payment(NotPayable)
-            .raw_call("getExpiredQuestions")
             .original_result()
     }
 

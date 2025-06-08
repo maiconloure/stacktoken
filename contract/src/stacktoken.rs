@@ -157,7 +157,7 @@ pub trait StackTokenContract {
 
         let mut question = self.questions(&question_id).get();
         require!(caller == question.creator, "Only creator can approve");
-        require!(timestamp >= question.deadline, "Cannot approve before deadline");
+        require!(timestamp < question.deadline, "Cannot approve after deadline");
         require!(question.status == QuestionStatus::Created || question.status == QuestionStatus::Answered, "Question is already closed");
 
         let mut answer = self.answers(&answer_id).get();
@@ -182,23 +182,45 @@ pub trait StackTokenContract {
     #[endpoint(refundQuestion)]
     fn refund_question(&self, question_id: u64) {
         let caller = self.blockchain().get_caller();
+        self.do_refund_question(question_id, Some(caller));
+    }
+
+    // New: Internal refund logic, can be called by anyone or system
+    fn do_refund_question(&self, question_id: u64, caller_opt: Option<ManagedAddress>) {
         let timestamp = self.blockchain().get_block_timestamp();
         let mut question = self.questions(&question_id).get();
+        let creator = question.creator.clone();
+        let caller = caller_opt.unwrap_or_else(|| creator.clone());
 
-        require!(caller == question.creator, "Only creator can refund");
+        require!(caller == creator, "Only creator can refund");
         require!(timestamp >= question.deadline, "Deadline not reached");
         require!(question.status == QuestionStatus::Created || question.status == QuestionStatus::Answered, "Question already handled");
 
         question.status = QuestionStatus::Expired;
         self.questions(&question_id).set(&question);
         self.send().direct(
-            &caller,
+            &creator,
             &EgldOrEsdtTokenIdentifier::egld(),
             0u64,
             &question.locked_amount,
         );
 
-        self.event_tokens_refunded(&question_id, &caller);
+        self.event_tokens_refunded(&question_id, &creator);
+    }
+
+    // New: Expire all questions past deadline (can be called by anyone)
+    #[endpoint(expireQuestions)]
+    fn expire_questions(&self) {
+        let now = self.blockchain().get_block_timestamp();
+        let total_questions = self.question_id().get();
+        for qid in 1..=total_questions {
+            let question = self.questions(&qid).get();
+            if (question.status == QuestionStatus::Created || question.status == QuestionStatus::Answered)
+                && now >= question.deadline {
+                // Refund to creator
+                self.do_refund_question(qid, None);
+            }
+        }
     }
 
     #[view(getAllOpenQuestions)]
@@ -241,39 +263,6 @@ pub trait StackTokenContract {
                 }
             })
             .collect()
-    }
-
-    #[view(getQuestionsByStatus)]
-    fn get_questions_by_status(&self, status: QuestionStatus) -> MultiValueEncoded<Question<Self::Api>> {
-        let mut results = MultiValueEncoded::new();
-        let total_questions = self.question_id().get();
-        
-        for qid in 1..=total_questions {
-            let question = self.questions(&qid).get();
-            if question.status == status {
-                results.push(question);
-            }
-        }
-        
-        results
-    }
-
-    #[view(getExpiredQuestions)]
-    fn get_expired_questions(&self) -> MultiValueEncoded<Question<Self::Api>> {
-        let now = self.blockchain().get_block_timestamp();
-        let mut results = MultiValueEncoded::new();
-        let total_questions = self.question_id().get();
-        
-        for qid in 1..=total_questions {
-            let question = self.questions(&qid).get();
-            // Questions that have passed deadline and are still open (Created or Answered)
-            if now >= question.deadline && 
-               (question.status == QuestionStatus::Created || question.status == QuestionStatus::Answered) {
-                results.push(question);
-            }
-        }
-        
-        results
     }
 
     // Helper function to check if a question should be marked as expired

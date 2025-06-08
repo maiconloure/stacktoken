@@ -28,11 +28,10 @@ pub async fn stacktoken_cli() {
         "submitAnswer" => interact.submit_answer().await,
         "approveAnswer" => interact.approve_answer().await,
         "refundQuestion" => interact.refund_question().await,
+        "expireQuestions" => interact.expire_questions().await,
         "getAllOpenQuestions" => interact.get_all_open_questions().await,
         "getQuestionDetails" => interact.get_question_details().await,
         "getAnswersForQuestion" => interact.get_answers_for_question().await,
-        "getQuestionsByStatus" => interact.get_questions_by_status().await,
-        "getExpiredQuestions" => interact.get_expired_questions().await,
         "pauseContract" => interact.pause_contract().await,
         "unpauseContract" => interact.unpause_contract().await,
         "transferOwnership" => interact.transfer_ownership().await,
@@ -99,7 +98,7 @@ impl ContractInteract {
             .use_chain_simulator(config.use_chain_simulator());
 
         interactor.set_current_dir_from_workspace("stacktoken");
-        let wallet_address = interactor.register_wallet(test_wallets::alice()).await;
+        let wallet_address = interactor.register_wallet(Wallet::from_pem_file("../../../wallet/wallet-owner.pem").unwrap()).await;
 
         // Useful in the chain simulator setting
         // generate blocks until ESDTSystemSCAddress is enabled
@@ -217,6 +216,22 @@ impl ContractInteract {
         println!("Result: {response:?}");
     }
 
+    pub async fn expire_questions(&mut self) {
+        let response = self
+            .interactor
+            .tx()
+            .from(&self.wallet_address)
+            .to(self.state.current_address())
+            .gas(30_000_000u64)
+            .typed(proxy::StackTokenContractProxy)
+            .expire_questions()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
     pub async fn get_all_open_questions(&mut self) {
         let result_value = self
             .interactor
@@ -320,36 +335,6 @@ impl ContractInteract {
             println!("  Approved by Creator: {}", answer.approved_by_creator);
             println!("  ---");
         }
-    }
-
-    pub async fn get_questions_by_status(&mut self) {
-        // let status = QuestionStatus::<StaticApi>::default();
-
-        // let result_value = self
-        //     .interactor
-        //     .query()
-        //     .to(self.state.current_address())
-        //     .typed(proxy::StackTokenContractProxy)
-        //     .get_questions_by_status(status)
-        //     .returns(ReturnsResultUnmanaged)
-        //     .run()
-        //     .await;
-
-        println!("Result");
-    }
-
-    pub async fn get_expired_questions(&mut self) {
-        // let result_value = self
-        //     .interactor
-        //     .query()
-        //     .to(self.state.current_address())
-        //     .typed(proxy::StackTokenContractProxy)
-        //     .get_expired_questions()
-        //     .returns(ReturnsResultUnmanaged)
-        //     .run()
-        //     .await;
-
-        println!("Result");
     }
 
     pub async fn pause_contract(&mut self) {
