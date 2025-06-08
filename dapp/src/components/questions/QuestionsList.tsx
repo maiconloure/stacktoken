@@ -27,7 +27,7 @@ interface UIQuestion {
   answers: number;
   reward: number;
   status: string;
-  deadline: string | number; // Allow both string (ISO) and number (timestamp)
+  deadline: string;
   createdAt: string;
 }
 
