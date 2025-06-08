@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
 import { X, Plus, Calendar, Award } from 'lucide-react';
@@ -13,22 +12,9 @@ export const AskQuestionForm: React.FC = () => {
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [currentTag, setCurrentTag] = useState('');
   const [reward, setReward] = useState('');
   const [deadline, setDeadline] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const addTag = () => {
-    if (currentTag.trim() && !tags.includes(currentTag.trim()) && tags.length < 5) {
-      setTags([...tags, currentTag.trim()]);
-      setCurrentTag('');
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +25,6 @@ export const AskQuestionForm: React.FC = () => {
       console.log('Submitting question:', {
         title,
         description,
-        tags,
         reward,
         deadline
       });
@@ -50,7 +35,6 @@ export const AskQuestionForm: React.FC = () => {
       // Reset form
       setTitle('');
       setDescription('');
-      setTags([]);
       setReward('');
       setDeadline('');
     } catch (error) {
@@ -100,42 +84,6 @@ export const AskQuestionForm: React.FC = () => {
             </p>
           </div>
 
-          {/* Tags */}
-          <div className="space-y-2">
-            <Label htmlFor="tags">{t('question.tags')}</Label>
-            <div className="flex space-x-2">
-              <Input
-                id="tags"
-                value={currentTag}
-                onChange={(e) => setCurrentTag(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                placeholder="Add tags (e.g., javascript, react, blockchain)"
-                className="flex-1"
-              />
-              <Button type="button" onClick={addTag} variant="outline">
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
-                  <span>{tag}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    className="ml-1 hover:text-destructive"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Add up to 5 tags to describe what your question is about.
-            </p>
-          </div>
-
-          {/* Reward and Deadline */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="reward" className="flex items-center space-x-2">

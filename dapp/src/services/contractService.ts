@@ -414,4 +414,14 @@ export class ContractService {
 
   async getExpiredQuestions() {}
 
+  async getAnswerCountForQuestion(questionId: string): Promise<number> {
+    try {
+      const answers = await this.getAnswersForQuestion(questionId);
+      return answers.length;
+    } catch (error) {
+      console.error('Error getting answer count for question:', error);
+      return 0;
+    }
+  }
+
 }

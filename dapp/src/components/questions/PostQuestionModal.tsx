@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from 'react-i18next';
-import { X, Plus, Calendar, Award, HelpCircle } from 'lucide-react';
+import { Calendar, Award, HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ContractService } from '@/services/contractService';
 import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
@@ -32,37 +31,15 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
   
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [currentTag, setCurrentTag] = useState('');
   const [reward, setReward] = useState('');
   const [deadline, setDeadline] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const contractService = new ContractService();
 
-  const addTag = () => {
-    if (currentTag.trim() && !tags.includes(currentTag.trim()) && tags.length < 5) {
-      setTags([...tags, currentTag.trim()]);
-      setCurrentTag('');
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
-    }
-  };
-
   const resetForm = () => {
     setTitle('');
     setDescription('');
-    setTags([]);
-    setCurrentTag('');
     setReward('');
     setDeadline('');
     setIsSubmitting(false);
@@ -95,7 +72,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
       const deadlineTimestamp = new Date(deadline).getTime();
       const rewardAmount = parseFloat(reward);
 
-      // Call the contract service to post the question
       await contractService.postQuestion(
         title.trim(),
         description.trim(),
@@ -124,15 +100,12 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
   };
 
   const handleClose = useCallback((newOpenState: boolean) => {
-    // If trying to close the modal
     if (!newOpenState) {
-      // If currently submitting, prevent closing
       if (isSubmitting) {
         return;
       }
       
-      // If user has entered any data, show confirmation
-      const hasData = title.trim() || description.trim() || tags.length > 0 || reward || deadline;
+      const hasData = title.trim() || description.trim() || reward || deadline;
       if (hasData) {
         const confirmClose = window.confirm(t('common.confirmClose') || 'You have unsaved changes. Are you sure you want to close?');
         if (!confirmClose) {
@@ -144,9 +117,8 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
     }
     
     onOpenChange(newOpenState);
-  }, [title, description, tags, reward, deadline, isSubmitting, t, onOpenChange]);
+  }, [title, description, reward, deadline, isSubmitting, t, onOpenChange]);
 
-  // Enhanced ESC key handling with confirmation
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && open) {
@@ -161,7 +133,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
     }
   }, [open, handleClose]);
 
-  // Calculate minimum deadline (24 hours from now)
   const minDeadline = new Date();
   minDeadline.setDate(minDeadline.getDate() + 1);
   const minDeadlineStr = minDeadline.toISOString().slice(0, 16);
@@ -180,7 +151,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-sm font-medium">
               {t('question.title')} *
@@ -199,7 +169,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
             </div>
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium">
               {t('question.description')} *
@@ -219,52 +188,7 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
             </div>
           </div>
 
-          {/* Tags */}
-          <div className="space-y-2">
-            <Label htmlFor="tags" className="text-sm font-medium">
-              {t('question.tags')} ({tags.length}/5)
-            </Label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="px-2 py-1">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    disabled={isSubmitting}
-                    className="ml-1 hover:text-destructive"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <Input
-                id="tags"
-                value={currentTag}
-                onChange={(e) => setCurrentTag(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={t('question.addTag')}
-                maxLength={20}
-                disabled={isSubmitting || tags.length >= 5}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addTag}
-                disabled={isSubmitting || !currentTag.trim() || tags.length >= 5}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Reward and Deadline Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Reward */}
             <div className="space-y-2">
               <Label htmlFor="reward" className="text-sm font-medium flex items-center gap-1">
                 <Award className="h-4 w-4 text-orange-600" />
@@ -283,7 +207,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
               />
             </div>
 
-            {/* Deadline */}
             <div className="space-y-2">
               <Label htmlFor="deadline" className="text-sm font-medium flex items-center gap-1">
                 <Calendar className="h-4 w-4 text-blue-600" />
@@ -301,7 +224,6 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
             </div>
           </div>
 
-          {/* Submission Info */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="text-sm font-medium text-blue-900 mb-2">
               {t('question.submissionInfo')}
@@ -310,11 +232,9 @@ export const PostQuestionModal: React.FC<PostQuestionModalProps> = ({
               <li>• {t('question.rewardWillBeLocked')}</li>
               <li>• {t('question.deadlineMinimum24Hours')}</li>
               <li>• {t('question.canApproveAnswer')}</li>
-              <li>• {t('question.tagsOptionalMaxFive')}</li>
             </ul>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
             <Button
               type="button"

@@ -2,6 +2,7 @@ import type React from "react"
 import { useEffect, useState, useRef } from "react"
 import { DappProvider } from "@multiversx/sdk-dapp/wrappers"
 import { SignTransactionsModals, TransactionsToastList } from "@multiversx/sdk-dapp/UI"
+import { SearchProvider } from "@/contexts/SearchContext"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
@@ -63,7 +64,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }
       }}
     >
-      {children}
+      <SearchProvider>
+        {children}
+      </SearchProvider>
       <SignTransactionsModals />
       <TransactionsToastList />
     </DappProvider>

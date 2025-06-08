@@ -17,7 +17,7 @@ interface Question {
   answers: number;
   reward: number;
   status: string;
-  deadline: string;
+  deadline: string | number; // Accept both string and number
   createdAt: string;
 }
 
@@ -50,6 +50,12 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     return new Date(dateString).toLocaleDateString();
   };
 
+  const formatDeadline = (deadline: string | number) => {
+    // Convert number (timestamp) to string if needed
+    const dateValue = typeof deadline === 'number' ? new Date(deadline) : new Date(deadline);
+    return dateValue.toLocaleDateString();
+  };
+
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer"
@@ -77,10 +83,6 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              <ThumbsUp className="h-4 w-4" />
-              <span>{question.votes}</span>
-            </div>
             <div className="flex items-center space-x-1">
               <MessageSquare className="h-4 w-4" />
               <span>{question.answers}</span>

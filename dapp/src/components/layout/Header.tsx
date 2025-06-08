@@ -5,6 +5,7 @@ import { WalletModal } from '@/components/wallet/WalletModal';
 import { PostQuestionButton } from '@/components/questions/PostQuestionButton';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useSearch } from '@/contexts/SearchContext';
 import { Search, Menu, Sun, Moon, Globe, Wallet } from 'lucide-react';
 import { useGetAccountInfo, useGetLoginInfo, useGetNetworkConfig } from "@multiversx/sdk-dapp/hooks"
 import { logout } from "@multiversx/sdk-dapp/utils"
@@ -19,6 +20,7 @@ import {
 export const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const { searchTerm, setSearchTerm } = useSearch();
   const { isLoggedIn } = useGetLoginInfo();
   const { address, account } = useGetAccountInfo()
   const { network } = useGetNetworkConfig();
@@ -58,6 +60,8 @@ export const Header: React.FC = () => {
               <input
                 type="text"
                 placeholder={t('search.placeholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>

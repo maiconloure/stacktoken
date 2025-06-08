@@ -6,9 +6,11 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from 'react-i18next';
+import { useGetNetworkConfig, useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
+import { ContractService, AnswerData } from '@/services/contractService';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Clock, 
-  Eye, 
   MessageSquare, 
   ThumbsUp, 
   Coins, 
@@ -16,14 +18,10 @@ import {
   User,
   X,
   CheckCircle,
-  AlertCircle,
   Loader2,
   Plus,
   Award
 } from 'lucide-react';
-import { useGetNetworkConfig, useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
-import { ContractService, AnswerData } from '@/services/contractService';
-import { useToast } from '@/hooks/use-toast';
 
 interface Question {
   id: string;
@@ -34,7 +32,7 @@ interface Question {
   answers: number;
   reward: number;
   status: string;
-  deadline: string;
+  deadline: number;
   createdAt: string;
 }
 
@@ -213,15 +211,12 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleString();
   };
 
-  const formatTimeRemaining = (deadline: string) => {
-    const now = new Date();
-    const deadlineDate = new Date(deadline);
-    const diff = deadlineDate.getTime() - now.getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? `${days} days left` : 'Expired';
+  const formatTimeRemaining = (deadline: number) => {
+    const milliseconds = Math.floor(deadline / 1000);
+    return new Date(milliseconds).toLocaleString()
   };
 
   return (
@@ -229,7 +224,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
@@ -243,17 +238,17 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
             </div>
             <h2 className="text-2xl font-bold mb-2">{question.title}</h2>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-              <div className="flex items-center space-x-1">
-                <User className="h-4 w-4" />
+              <div className="flex flex-col">
+                <p><b>Creator</b></p>
                 <span>{question.creator}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
-                <span>Created {formatDate(question.createdAt)}</span>
+                <span><b>Created:</b> <br/>{formatDate(question.createdAt)}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Clock className="h-4 w-4" />
-                <span>{formatTimeRemaining(question.deadline)}</span>
+                <span><b>Deadline:</b> <br/>{formatTimeRemaining(question.deadline)}</span>
               </div>
             </div>
           </div>
@@ -275,14 +270,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-              <ThumbsUp className="h-5 w-5 text-blue-600" />
-              <div>
-                <div className="font-semibold">{question.votes}</div>
-                <div className="text-sm text-muted-foreground">Votes</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg text-slate-800">
               <MessageSquare className="h-5 w-5 text-green-600" />
               <div>
                 <div className="font-semibold">{answers.length}</div>
@@ -290,7 +278,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
               </div>
             </div>
             
-            <div className="flex items-center space-x-2 p-3 bg-orange-50 rounded-lg">
+            <div className="flex items-center space-x-2 p-3 bg-orange-50 rounded-lg text-slate-800">
               <Coins className="h-5 w-5 text-orange-600" />
               <div>
                 <div className="font-semibold">{question.reward}</div>
@@ -301,7 +289,6 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
 
           <Separator />
 
-          {/* Answers Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold flex items-center">
@@ -440,10 +427,6 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
                                 <Calendar className="h-4 w-4" />
                                 <span>{formatDate(new Date(answer.createdAt).toISOString())}</span>
                               </div>
-                              <div className="flex items-center space-x-1">
-                                <ThumbsUp className="h-4 w-4" />
-                                <span>{answer.votes} votes</span>
-                              </div>
                             </div>
                           </div>
                           
@@ -454,7 +437,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({ question, onClose 
                               disabled={approvingAnswer === answer.answerId}
                               size="sm"
                               variant="outline"
-                              className="ml-4 border-green-300 text-green-700 hover:bg-green-50"
+                              className="ml-4 border-green-300 text-green-700 hover:bg-green-50 hover:text-slate-800"
                             >
                               {approvingAnswer === answer.answerId ? (
                                 <>

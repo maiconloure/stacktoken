@@ -8,7 +8,6 @@ const resources = {
       // Navigation
       'nav.home': 'Home',
       'nav.questions': 'Questions',
-      'nav.tags': 'Tags',
       'nav.users': 'Users',
       'nav.ask': 'Ask Question',
       
@@ -27,7 +26,6 @@ const resources = {
       'question.titlePlaceholder': 'Enter a clear and specific title for your question...',
       'question.description': 'Description',
       'question.descriptionPlaceholder': 'Provide detailed information about your question. Include code examples, expected behavior, and what you\'ve tried...',
-      'question.tags': 'Tags',
       'question.addTag': 'Add tag...',
       'question.deadline': 'Deadline',
       'question.reward': 'Reward Amount',
@@ -37,7 +35,6 @@ const resources = {
       'question.rewardWillBeLocked': 'The reward amount will be locked until you approve an answer',
       'question.deadlineMinimum24Hours': 'Deadline must be at least 24 hours from now',
       'question.canApproveAnswer': 'You can approve the best answer before the deadline',
-      'question.tagsOptionalMaxFive': 'Tags are optional but helpful (maximum 5)',
       'question.status.Created': 'Created',
       'question.status.Answered': 'Answered',
       'question.status.AnswerApproved': 'Answer Approved',
@@ -102,7 +99,6 @@ const resources = {
       // Navigation
       'nav.home': 'Início',
       'nav.questions': 'Perguntas',
-      'nav.tags': 'Tags',
       'nav.users': 'Usuários',
       'nav.postQuestion': 'Nova Pergunta',
       'nav.ask': 'Fazer Pergunta',
@@ -121,7 +117,6 @@ const resources = {
       'question.titlePlaceholder': 'Digite um título claro e específico para sua pergunta...',
       'question.description': 'Descrição',
       'question.descriptionPlaceholder': 'Forneça informações detalhadas sobre sua pergunta. Inclua exemplos de código, comportamento esperado e o que você tentou...',
-      'question.tags': 'Tags',
       'question.addTag': 'Adicionar tag...',
       'question.deadline': 'Prazo',
       'question.reward': 'Valor da Recompensa',
@@ -131,7 +126,6 @@ const resources = {
       'question.rewardWillBeLocked': 'O valor da recompensa será bloqueado até você aprovar uma resposta',
       'question.deadlineMinimum24Hours': 'O prazo deve ser de pelo menos 24 horas a partir de agora',
       'question.canApproveAnswer': 'Você pode aprovar a melhor resposta antes do prazo',
-      'question.tagsOptionalMaxFive': 'Tags são opcionais mas úteis (máximo 5)',
       'question.status.Created': 'Criada',
       'question.status.Answered': 'Respondida',
       'question.status.AnswerApproved': 'Resposta Aprovada',
