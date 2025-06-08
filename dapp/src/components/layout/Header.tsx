@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { WalletModal } from '@/components/wallet/WalletModal';
+import { PostQuestionButton } from '@/components/questions/PostQuestionButton';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Search, Menu, Sun, Moon, Globe, Wallet } from 'lucide-react';
@@ -62,7 +63,7 @@ export const Header: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

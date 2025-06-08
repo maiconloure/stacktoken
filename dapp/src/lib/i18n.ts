@@ -19,20 +19,31 @@ const resources = {
       'wallet.address': 'Address',
       
       // Questions
+      'question.postQuestion': 'New Question',
       'question.ask': 'Ask a Question',
+      'question.postNew': 'Post New Question',
+      'question.postNewDescription': 'Share your question with the community and set a reward for the best answer.',
       'question.title': 'Title',
+      'question.titlePlaceholder': 'Enter a clear and specific title for your question...',
       'question.description': 'Description',
+      'question.descriptionPlaceholder': 'Provide detailed information about your question. Include code examples, expected behavior, and what you\'ve tried...',
       'question.tags': 'Tags',
+      'question.addTag': 'Add tag...',
       'question.deadline': 'Deadline',
       'question.reward': 'Reward Amount',
       'question.submit': 'Post Question',
+      'question.postFor': 'Post for',
+      'question.submissionInfo': 'Submission Info',
+      'question.rewardWillBeLocked': 'The reward amount will be locked until you approve an answer',
+      'question.deadlineMinimum24Hours': 'Deadline must be at least 24 hours from now',
+      'question.canApproveAnswer': 'You can approve the best answer before the deadline',
+      'question.tagsOptionalMaxFive': 'Tags are optional but helpful (maximum 5)',
       'question.status.Created': 'Created',
       'question.status.Answered': 'Answered',
       'question.status.AnswerApproved': 'Answer Approved',
       'question.status.Expired': 'Expired',
       'question.votes': 'votes',
       'question.answers': 'answers',
-      'question.views': 'views',
       
       // Answers
       'answer.post': 'Post Your Answer',
@@ -52,6 +63,7 @@ const resources = {
       
       // Common
       'common.loading': 'Loading...',
+      'common.posting': 'Posting...',
       'common.error': 'Error occurred',
       'common.success': 'Success',
       'common.cancel': 'Cancel',
@@ -60,6 +72,19 @@ const resources = {
       'common.delete': 'Delete',
       'common.view': 'View',
       'common.share': 'Share',
+      'common.confirmClose': 'You have unsaved changes. Are you sure you want to close?',
+      
+      // Error messages
+      'error.walletNotConnected': 'Wallet not connected',
+      'error.pleaseConnectWallet': 'Please connect your wallet to post a question',
+      'error.requiredFields': 'Required fields missing',
+      'error.fillAllFields': 'Please fill in all required fields',
+      'error.postQuestion': 'Failed to post question',
+      'error.tryAgain': 'Please try again later',
+      
+      // Success messages
+      'success.questionPosted': 'Question posted successfully!',
+      'success.questionPostedDescription': 'Your question has been posted and is now visible to the community.',
       
       // Time
       'time.ago': 'ago',
@@ -79,6 +104,7 @@ const resources = {
       'nav.questions': 'Perguntas',
       'nav.tags': 'Tags',
       'nav.users': 'Usuários',
+      'nav.postQuestion': 'Nova Pergunta',
       'nav.ask': 'Fazer Pergunta',
       
       // Wallet
@@ -89,19 +115,29 @@ const resources = {
       
       // Questions
       'question.ask': 'Fazer uma Pergunta',
+      'question.postNew': 'Publicar Nova Pergunta',
+      'question.postNewDescription': 'Compartilhe sua pergunta com a comunidade e defina uma recompensa pela melhor resposta.',
       'question.title': 'Título',
+      'question.titlePlaceholder': 'Digite um título claro e específico para sua pergunta...',
       'question.description': 'Descrição',
+      'question.descriptionPlaceholder': 'Forneça informações detalhadas sobre sua pergunta. Inclua exemplos de código, comportamento esperado e o que você tentou...',
       'question.tags': 'Tags',
+      'question.addTag': 'Adicionar tag...',
       'question.deadline': 'Prazo',
       'question.reward': 'Valor da Recompensa',
       'question.submit': 'Publicar Pergunta',
+      'question.postFor': 'Publicar por',
+      'question.submissionInfo': 'Informações da Submissão',
+      'question.rewardWillBeLocked': 'O valor da recompensa será bloqueado até você aprovar uma resposta',
+      'question.deadlineMinimum24Hours': 'O prazo deve ser de pelo menos 24 horas a partir de agora',
+      'question.canApproveAnswer': 'Você pode aprovar a melhor resposta antes do prazo',
+      'question.tagsOptionalMaxFive': 'Tags são opcionais mas úteis (máximo 5)',
       'question.status.Created': 'Criada',
       'question.status.Answered': 'Respondida',
       'question.status.AnswerApproved': 'Resposta Aprovada',
       'question.status.Expired': 'Expirada',
       'question.votes': 'votos',
       'question.answers': 'respostas',
-      'question.views': 'visualizações',
       
       // Answers
       'answer.post': 'Poste sua Resposta',
@@ -121,6 +157,7 @@ const resources = {
       
       // Common
       'common.loading': 'Carregando...',
+      'common.posting': 'Publicando...',
       'common.error': 'Erro ocorrido',
       'common.success': 'Sucesso',
       'common.cancel': 'Cancelar',
@@ -129,6 +166,19 @@ const resources = {
       'common.delete': 'Excluir',
       'common.view': 'Ver',
       'common.share': 'Compartilhar',
+      'common.confirmClose': 'Você tem alterações não salvas. Tem certeza que deseja fechar?',
+      
+      // Error messages
+      'error.walletNotConnected': 'Carteira não conectada',
+      'error.pleaseConnectWallet': 'Por favor conecte sua carteira para publicar uma pergunta',
+      'error.requiredFields': 'Campos obrigatórios em falta',
+      'error.fillAllFields': 'Por favor preencha todos os campos obrigatórios',
+      'error.postQuestion': 'Falha ao publicar pergunta',
+      'error.tryAgain': 'Por favor tente novamente mais tarde',
+      
+      // Success messages
+      'success.questionPosted': 'Pergunta publicada com sucesso!',
+      'success.questionPostedDescription': 'Sua pergunta foi publicada e agora está visível para a comunidade.',
       
       // Time
       'time.ago': 'atrás',

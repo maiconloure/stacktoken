@@ -1,10 +1,12 @@
-
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
-import { ArrowUp, MessageSquare, Eye, Clock, Award, Reply } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  MessageSquare, 
+  ThumbsUp, 
+  Coins
+} from 'lucide-react';
+import { useGetNetworkConfig } from '@multiversx/sdk-dapp/hooks';
 
 interface Question {
   id: string;
@@ -14,8 +16,8 @@ interface Question {
   votes: number;
   answers: number;
   reward: number;
-  deadline: string;
-  status: any;
+  status: string;
+  deadline: string | number; // Allow both string (ISO) and number (timestamp)
   createdAt: string;
 }
 
@@ -24,89 +26,70 @@ interface QuestionCardProps {
   onClick?: () => void;
 }
 
-export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onClick }) => {
-  const { t } = useTranslation();
-
+export const QuestionCard: React.FC<QuestionCardProps> = ({ 
+  question, 
+  onClick
+}) => {
+  const { network } = useGetNetworkConfig();
+  
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'open':
-        return 'bg-green-500';
+    switch (status.toLowerCase()) {
       case 'answered':
-        return 'bg-blue-500';
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'created':
+      case 'open':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'closed':
-        return 'bg-gray-500';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
-        return 'bg-gray-500';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) return t('time.now');
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} ${t('time.minutes')} ${t('time.ago')}`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ${t('time.hours')} ${t('time.ago')}`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} ${t('time.days')} ${t('time.ago')}`;
-    return `${Math.floor(diffInSeconds / 2592000)} ${t('time.months')} ${t('time.ago')}`;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
-    <Card className="question-card animate-fade-in">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
       <CardContent className="p-6">
-        <div className="flex space-x-4">
-          <div className="flex flex-col items-center space-y-2 min-w-[80px]">
-            <div className="text-center">
-              <div className="text-lg font-semibold">{question.votes}</div>
-              <div className="text-xs text-muted-foreground">{t('question.votes')}</div>
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <Badge className={getStatusColor(question.status)}>
+              {question.status}
+            </Badge>
+            {question.reward > 0 && (
+              <Badge variant="outline" className="text-orange-600 border-orange-200">
+                <Coins className="h-3 w-3 mr-1" />
+                {question.reward} {network.egldLabel}
+              </Badge>
+            )}
+          </div>
+        </div>
+        
+        <h3 className="text-lg font-semibold mb-2 line-clamp-2">{question.title}</h3>
+        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+          {question.description}
+        </p>
+        
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-1">
+              <ThumbsUp className="h-4 w-4" />
+              <span>{question.votes}</span>
             </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold">{question.answers}</div>
-              <div className="text-xs text-muted-foreground">{t('question.answers')}</div>
+            <div className="flex items-center space-x-1">
+              <MessageSquare className="h-4 w-4" />
+              <span>{question.answers}</span>
             </div>
           </div>
-
-          <div className="flex-1">
-            <div className="flex items-start justify-between mb-2">
-              <h3 
-                className="text-lg font-semibold hover:text-primary cursor-pointer transition-colors line-clamp-2"
-                onClick={onClick}
-              >
-                {question.title}
-              </h3>
-              <div className="flex items-center space-x-2 ml-4">
-                <Badge variant="outline" className={getStatusColor(question.status)}>
-                  {t(`question.status.${question.status}`)}
-                </Badge>
-                {question.reward > 0 && (
-                  <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                    <Award className="h-3 w-3 mr-1" />
-                    {question.reward} xEGLD
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-              {question.description}
-            </p>
-
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center space-x-4">
-                <span>asked by {question.creator}</span>
-                <span>{formatTimeAgo(question.createdAt)}</span>
-                {question.deadline && (
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>ends {formatTimeAgo(question.deadline)}</span>
-                  </div>
-                )}
-              </div>
-              <Button variant="ghost" size="lg">
-                <Reply size={28} />
-              </Button>
-            </div>
+          <div className="flex items-center space-x-2">
+            <span>by {question.creator}</span>
+            <span>•</span>
+            <span>{formatDate(question.createdAt)}</span>
           </div>
         </div>
       </CardContent>
