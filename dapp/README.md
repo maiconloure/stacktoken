@@ -1,73 +1,101 @@
-# Welcome to your Lovable project
+# StackToken dApp
 
-## Project info
+A decentralized Q&A platform built on the MultiversX blockchain. Users can ask and answer questions, interact with the StackToken smart contract, and connect their MultiversX wallets (including xPortal) for blockchain-based actions.
 
-**URL**: https://lovable.dev/projects/2a21250c-163a-43bc-9775-7f12ca4b17f4
+## Features
+- Ask and answer questions on-chain
+- Connect with MultiversX wallets (only Metamask available)
+- Earn and spend StackToken for participation
+- Modern, responsive UI
 
-## How can I edit this code?
+## Technologies Used
+- [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/) (build tool)
+- [Tailwind CSS](https://tailwindcss.com/) (utility-first CSS)
+- [shadcn/ui](https://ui.shadcn.com/) (UI components)
+- [MultiversX SDK](https://docs.multiversx.com/sdk-and-tools/sdk-dapp/) (`@multiversx/sdk-dapp`)
+- [WalletConnect v2](https://cloud.walletconnect.com/)
 
-There are several ways of editing your application.
+## How It Works
 
-**Use Lovable**
+### Architecture Overview
+- **Frontend**: Built with React and TypeScript, the dApp provides a modern, responsive interface for users to interact with the blockchain.
+- **Smart Contract**: The StackToken contract (written in Rust, deployed on MultiversX) manages questions, answers, and token balances.
+- **Wallet Integration**: Users connect their MultiversX-compatible wallets (web, xPortal, WalletConnect) to sign transactions and interact with the contract.
+- **On-chain Q&A**: All questions and answers are stored on-chain, ensuring transparency and immutability. Token rewards and fees are handled by the contract.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2a21250c-163a-43bc-9775-7f12ca4b17f4) and start prompting.
+### Core Logic
+- **Asking a Question**: Users submit a question via the UI. The dApp calls the smart contract's `askQuestion` method, which stores the question on-chain and may deduct a token fee.
+- **Answering a Question**: Users can answer questions by calling the contract's `answerQuestion` method. Answers are stored on-chain, and users may earn tokens for accepted answers.
+- **Wallet Connection**: The dApp uses `@multiversx/sdk-dapp` to connect to wallets, sign transactions, and fetch account data. WalletConnect v2 enables mobile and cross-platform wallet support.
+- **State Management**: React context and hooks manage wallet state, questions, answers, and UI feedback.
+- **Contract Interaction**: All blockchain interactions are handled through a service layer (`src/services/contractService.ts`), which abstracts contract calls and transaction logic.
 
-Changes made via Lovable will be committed automatically to this repo.
+### File Structure Highlights
+- `src/components/`: UI components (questions, answers, wallet, layout)
+- `src/pages/`: Main pages (AskQuestion, Questions, etc.)
+- `src/services/contractService.ts`: Handles all contract calls
+- `src/contracts/stacktoken.abi.json`: Contract ABI for encoding/decoding calls
+- `src/contexts/`: React contexts for app-wide state
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [npm](https://www.npmjs.com/) or [bun](https://bun.sh/) (for dependency management)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### 1. Clone the repository
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+git clone https://github.com/maiconloure/stacktoken.git
+cd stacktoken/dapp
 ```
 
-**Edit a file directly in GitHub**
+### 2. Install dependencies
+```sh
+npm install
+# or
+bun install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 3. Configure Environment Variables
+Copy `.env.example` to `.env` and fill in the required values:
+```sh
+cp .env.example .env
+```
+Edit `.env` and set the correct variables as the env.example
 
-**Use GitHub Codespaces**
+### 4. Run the Development Server
+```sh
+npm run dev
+```
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Building for Production
+```sh
+npm run build
+```
+The output will be in the `dist/` folder. You can preview with:
+```sh
+npm run preview
+```
 
-## What technologies are used for this project?
+## Connecting Your Wallet
+- Click the wallet connect button in the UI
+- Choose your preferred wallet (web, xPortal, WalletConnect)
+- Approve the connection and interact with the contract
 
-This project is built with:
+## Contract & Blockchain
+- The dApp interacts with the StackToken smart contract deployed on MultiversX
+- Contract ABI is in `src/contracts/stacktoken.abi.json`
+- Update the contract address in your `.env` file after deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Linting & Code Quality
+```sh
+npm run lint
+```
 
-## How can I deploy this project?
+## License
+MIT
 
-Simply open [Lovable](https://lovable.dev/projects/2a21250c-163a-43bc-9775-7f12ca4b17f4) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+Made by Maicon Souza. Powered by MultiversX.
