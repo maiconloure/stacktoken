@@ -30,22 +30,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <DappProvider
-      environment="devnet"
+      environment={process.env.REACT_APP_ENVIRONMENT || "devnet"}
       customNetworkConfig={{
-        id: "D",
-        name: 'MultiversX Devnet',
+        id: process.env.REACT_APP_CHAIN || "D",
+        name: 'MultiversX',
         apiTimeout: 60000,
         egldLabel: "xEGLD",
         decimals: "18",
         digits: "4",
         gasPerDataByte: "1500",
         walletConnectDeepLink:
-          "https://maiar.page.link/?apn=com.elrond.maiar.wallet&isi=1519405832&ibi=com.elrond.maiar.wallet&link=https://xportal.com/",
+          process.env.REACT_APP_CONNECTION_DEEP_LINK || "https://maiar.page.link/?apn=com.elrond.maiar.wallet&isi=1519405832&ibi=com.elrond.maiar.wallet&link=https://xportal.com/",
         walletConnectBridgeAddresses: ["https://bridge.walletconnect.org"],
-        walletAddress: "https://devnet-wallet.multiversx.com/dapp/init",
-        apiAddress: "https://devnet-api.multiversx.com",
-        explorerAddress: "http://devnet-explorer.multiversx.com",
-        chainId: "D",
+        walletAddress: process.env.REACT_APP_WALLET_ADDRESS || "https://devnet-wallet.multiversx.com/dapp/init",
+        apiAddress: process.env.REACT_APP_NETWORK_API || "https://devnet-api.multiversx.com",
+        explorerAddress: process.env.REACT_APP_EXPLORER_ADDRESS || "http://devnet-explorer.multiversx.com",
+        chainId: process.env.REACT_APP_CHAIN || "D",
         walletConnectV2ProjectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "",
       }}
       dappConfig={{
