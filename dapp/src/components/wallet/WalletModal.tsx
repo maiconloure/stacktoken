@@ -11,12 +11,21 @@ import {
   WebWalletLoginButton,
   MetamaskLoginButton,
 } from "@multiversx/sdk-dapp/UI"
+import { useEffect } from 'react';
+import { useGetLoginInfo } from '@multiversx/sdk-dapp/hooks';
 
 export const WalletModal = ({
   open,
   onOpenChange,
 }) => {
   const { t } = useTranslation();
+  const { isLoggedIn } = useGetLoginInfo();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      onOpenChange(false);
+    }
+  }, [isLoggedIn])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -32,8 +41,8 @@ export const WalletModal = ({
         </DialogHeader>
         
         <div className="space-y-3 mt-4">
-          <WebWalletLoginButton callbackRoute="/questions" />
-          <MetamaskLoginButton callbackRoute="/questions" />
+          {/* <WebWalletLoginButton callbackRoute="/" /> */}
+          <MetamaskLoginButton callbackRoute="/" />
         </div>
 
         <div className="mt-6 pt-4 border-t">
