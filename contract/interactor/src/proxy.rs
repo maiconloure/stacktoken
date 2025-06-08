@@ -184,6 +184,82 @@ where
             .raw_call("getExpiredQuestions")
             .original_result()
     }
+
+    pub fn pause_contract(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("pauseContract")
+            .original_result()
+    }
+
+    pub fn unpause_contract(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("unpauseContract")
+            .original_result()
+    }
+
+    pub fn transfer_ownership<
+        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
+    >(
+        self,
+        new_owner: Arg0,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("transferOwnership")
+            .argument(&new_owner)
+            .original_result()
+    }
+
+    pub fn get_owner(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ManagedAddress<Env::Api>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getOwner")
+            .original_result()
+    }
+
+    pub fn is_contract_paused(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, bool> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("isPaused")
+            .original_result()
+    }
+
+    pub fn get_total_questions(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, u64> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getTotalQuestions")
+            .original_result()
+    }
+
+    pub fn get_total_answers(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, u64> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getTotalAnswers")
+            .original_result()
+    }
+
+    pub fn get_contract_stats(
+        self,
+    ) -> TxTypedCall<Env, From, To, NotPayable, Gas, MultiValue3<u64, u64, bool>> {
+        self.wrapped_tx
+            .payment(NotPayable)
+            .raw_call("getContractStats")
+            .original_result()
+    }
 }
 
 #[type_abi]

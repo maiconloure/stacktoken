@@ -53,7 +53,11 @@ pub struct QuestionCreatedEventData<M: ManagedTypeApi> {
 #[multiversx_sc::contract]
 pub trait StackTokenContract {
     #[init]
-    fn init(&self) {}
+    fn init(&self) {
+        let caller = self.blockchain().get_caller();
+        self.owner().set(&caller);
+        self.is_paused().set(false);
+    }
 
     #[payable("EGLD")]
     #[endpoint(postQuestion)]
@@ -63,6 +67,8 @@ pub trait StackTokenContract {
         description: ManagedBuffer,
         deadline: u64,
     ) {
+        require!(!self.is_paused().get(), "Contract is paused");
+        
         let caller = self.blockchain().get_caller();
         let payment = self.call_value().egld();
         require!(*payment >= BigUint::from(MIN_EGLD_LOCKED), "Insufficient EGLD");
@@ -106,6 +112,8 @@ pub trait StackTokenContract {
         title: ManagedBuffer,
         description: ManagedBuffer,
     ) {
+        require!(!self.is_paused().get(), "Contract is paused");
+        
         let caller = self.blockchain().get_caller();
         let timestamp = self.blockchain().get_block_timestamp();
 
@@ -258,7 +266,7 @@ pub trait StackTokenContract {
         
         for qid in 1..=total_questions {
             let question = self.questions(&qid).get();
-            // Questions that are past deadline but not yet approved or refunded
+            // Questions that have passed deadline and are still open (Created or Answered)
             if now >= question.deadline && 
                (question.status == QuestionStatus::Created || question.status == QuestionStatus::Answered) {
                 results.push(question);
@@ -330,5 +338,79 @@ pub trait StackTokenContract {
         &self,
         #[indexed] question_id: &u64,
         #[indexed] creator: &ManagedAddress,
+    );
+
+    // Owner management endpoints
+    #[only_owner]
+    #[endpoint(pauseContract)]
+    fn pause_contract(&self) {
+        self.is_paused().set(true);
+        self.event_contract_paused();
+    }
+
+    #[only_owner]
+    #[endpoint(unpauseContract)]
+    fn unpause_contract(&self) {
+        self.is_paused().set(false);
+        self.event_contract_unpaused();
+    }
+
+    #[only_owner]
+    #[endpoint(transferOwnership)]
+    fn transfer_ownership(&self, new_owner: ManagedAddress) {
+        let old_owner = self.owner().get();
+        self.owner().set(&new_owner);
+        self.event_ownership_transferred(&old_owner, &new_owner);
+    }
+
+    // View functions for contract status and statistics
+    #[view(getOwner)]
+    fn get_owner(&self) -> ManagedAddress {
+        self.owner().get()
+    }
+
+    #[view(isPaused)]
+    fn is_contract_paused(&self) -> bool {
+        self.is_paused().get()
+    }
+
+    #[view(getTotalQuestions)]
+    fn get_total_questions(&self) -> u64 {
+        self.question_id().get()
+    }
+
+    #[view(getTotalAnswers)]
+    fn get_total_answers(&self) -> u64 {
+        self.answer_id().get()
+    }
+
+    #[view(getContractStats)]
+    fn get_contract_stats(&self) -> MultiValue3<u64, u64, bool> {
+        (
+            self.question_id().get(),  // total questions
+            self.answer_id().get(),    // total answers
+            self.is_paused().get(),    // is paused
+        ).into()
+    }
+
+    // Storage mappers for owner and pause functionality
+    #[storage_mapper("owner")]
+    fn owner(&self) -> SingleValueMapper<ManagedAddress>;
+
+    #[storage_mapper("is_paused")]
+    fn is_paused(&self) -> SingleValueMapper<bool>;
+
+    // Events for ownership and pause functionality
+    #[event("contract_paused")]
+    fn event_contract_paused(&self);
+
+    #[event("contract_unpaused")]
+    fn event_contract_unpaused(&self);
+
+    #[event("ownership_transferred")]
+    fn event_ownership_transferred(
+        &self,
+        #[indexed] old_owner: &ManagedAddress,
+        #[indexed] new_owner: &ManagedAddress,
     );
 }

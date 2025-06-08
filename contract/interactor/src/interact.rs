@@ -5,7 +5,7 @@ mod proxy;
 
 use config::Config;
 use multiversx_sc_snippets::imports::*;
-use proxy::QuestionStatus;
+use proxy::{Question, Answer};
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Read, Write},
@@ -33,6 +33,14 @@ pub async fn stacktoken_cli() {
         "getAnswersForQuestion" => interact.get_answers_for_question().await,
         "getQuestionsByStatus" => interact.get_questions_by_status().await,
         "getExpiredQuestions" => interact.get_expired_questions().await,
+        "pauseContract" => interact.pause_contract().await,
+        "unpauseContract" => interact.unpause_contract().await,
+        "transferOwnership" => interact.transfer_ownership().await,
+        "getOwner" => interact.get_owner().await,
+        "isPaused" => interact.is_contract_paused().await,
+        "getTotalQuestions" => interact.get_total_questions().await,
+        "getTotalAnswers" => interact.get_total_answers().await,
+        "getContractStats" => interact.get_contract_stats().await,
         _ => panic!("unknown command: {}", &cmd),
     }
 }
@@ -210,53 +218,112 @@ impl ContractInteract {
     }
 
     pub async fn get_all_open_questions(&mut self) {
-        // let result_value = self
-        //     .interactor
-        //     .query()
-        //     .to(self.state.current_address())
-        //     .typed(proxy::StackTokenContractProxy)
-        //     .get_all_open_questions()
-        //     .returns(ReturnsResultUnmanaged)
-        //     .run()
-        //     .await;
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_all_open_questions()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
 
-        println!("Query executed. (Result type does not implement Debug)");
+        let questions_vec: Vec<Question<StaticApi>> = result_value.into_vec();
+        println!("Found {} open questions:", questions_vec.len());
+        
+        if questions_vec.is_empty() {
+            println!("No open questions found.");
+            return;
+        }
+        
+        for (index, question) in questions_vec.iter().enumerate() {
+            println!("Question {}:", index + 1);
+            println!("  ID: {}", question.question_id);
+            println!("  Title: {}", question.title.to_string());
+            println!("  Description: {}", question.description.to_string());
+            println!("  Creator: {}", bech32::encode(&question.creator.to_address()));
+            println!("  Deadline: {}", question.deadline);
+            println!("  Locked Amount: {:?}", question.locked_amount);
+            println!("  Created At: {}", question.created_at);
+            println!("  Status: {:?}", question.status);
+            if let Some(approved_id) = question.approved_answer_id {
+                println!("  Approved Answer ID: {}", approved_id);
+            }
+            println!("  ---");
+        }
     }
 
     pub async fn get_question_details(&mut self) {
-        // let question_id = 0u64;
+        let question_id = 0u64; // You can modify this to accept a parameter or read from input
 
-        // let result_value = self
-        //     .interactor
-        //     .query()
-        //     .to(self.state.current_address())
-        //     .typed(proxy::StackTokenContractProxy)
-        //     .get_question_details(question_id)
-        //     .returns(ReturnsResultUnmanaged)
-        //     .run()
-        //     .await;
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_question_details(question_id)
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
 
-        println!("Question details retrieved successfully");
+        match result_value.into_option() {
+            Some(question) => {
+                println!("Question Details:");
+                println!("  ID: {}", question.question_id);
+                println!("  Title: {}", question.title.to_string());
+                println!("  Description: {}", question.description.to_string());
+                println!("  Creator: {}", bech32::encode(&question.creator.to_address()));
+                println!("  Deadline: {}", question.deadline);
+                println!("  Locked Amount: {:?}", question.locked_amount);
+                println!("  Created At: {}", question.created_at);
+                println!("  Status: {:?}", question.status);
+                if let Some(approved_id) = question.approved_answer_id {
+                    println!("  Approved Answer ID: {}", approved_id);
+                }
+            }
+            None => {
+                println!("Question with ID {} not found", question_id);
+            }
+        }
     }
 
     pub async fn get_answers_for_question(&mut self) {
-        // let question_id = 0u64;
+        let question_id = 0u64; // You can modify this to accept a parameter or read from input
 
-        // let result_value = self
-        //     .interactor
-        //     .query()
-        //     .to(self.state.current_address())
-        //     .typed(proxy::StackTokenContractProxy)
-        //     .get_answers_for_question(question_id)
-        //     .returns(ReturnsResultUnmanaged)
-        //     .run()
-        //     .await;
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_answers_for_question(question_id)
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
 
-        println!("Query executed. (Result type does not implement Debug)");
+        let answers_vec: Vec<Answer<StaticApi>> = result_value.into_vec();
+        println!("Found {} answers for question ID {}:", answers_vec.len(), question_id);
+        
+        if answers_vec.is_empty() {
+            println!("No answers found for this question.");
+            return;
+        }
+        
+        for (index, answer) in answers_vec.iter().enumerate() {
+            println!("Answer {}:", index + 1);
+            println!("  Answer ID: {}", answer.answer_id);
+            println!("  Question ID: {}", answer.question_id);
+            println!("  Title: {}", answer.title.to_string());
+            println!("  Description: {}", answer.description.to_string());
+            println!("  Creator: {}", bech32::encode(&answer.creator.to_address()));
+            println!("  Created At: {}", answer.created_at);
+            println!("  Votes: {}", answer.votes);
+            println!("  Approved by Creator: {}", answer.approved_by_creator);
+            println!("  ---");
+        }
     }
 
     pub async fn get_questions_by_status(&mut self) {
-        // let status = QuestionStatus::default();
+        // let status = QuestionStatus::<StaticApi>::default();
 
         // let result_value = self
         //     .interactor
@@ -268,7 +335,7 @@ impl ContractInteract {
         //     .run()
         //     .await;
 
-        println!("Query executed. (Result type does not implement Debug)");
+        println!("Result");
     }
 
     pub async fn get_expired_questions(&mut self) {
@@ -282,7 +349,127 @@ impl ContractInteract {
         //     .run()
         //     .await;
 
-        println!("Query executed. (Result type does not implement Debug)");
+        println!("Result");
+    }
+
+    pub async fn pause_contract(&mut self) {
+        let response = self
+            .interactor
+            .tx()
+            .from(&self.wallet_address)
+            .to(self.state.current_address())
+            .gas(30_000_000u64)
+            .typed(proxy::StackTokenContractProxy)
+            .pause_contract()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
+    pub async fn unpause_contract(&mut self) {
+        let response = self
+            .interactor
+            .tx()
+            .from(&self.wallet_address)
+            .to(self.state.current_address())
+            .gas(30_000_000u64)
+            .typed(proxy::StackTokenContractProxy)
+            .unpause_contract()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
+    pub async fn transfer_ownership(&mut self) {
+        let new_owner = bech32::decode("");
+
+        let response = self
+            .interactor
+            .tx()
+            .from(&self.wallet_address)
+            .to(self.state.current_address())
+            .gas(30_000_000u64)
+            .typed(proxy::StackTokenContractProxy)
+            .transfer_ownership(new_owner)
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
+    pub async fn get_owner(&mut self) {
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_owner()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {result_value:?}");
+    }
+
+    pub async fn is_contract_paused(&mut self) {
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .is_contract_paused()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {result_value:?}");
+    }
+
+    pub async fn get_total_questions(&mut self) {
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_total_questions()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {result_value:?}");
+    }
+
+    pub async fn get_total_answers(&mut self) {
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_total_answers()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {result_value:?}");
+    }
+
+    pub async fn get_contract_stats(&mut self) {
+        let result_value = self
+            .interactor
+            .query()
+            .to(self.state.current_address())
+            .typed(proxy::StackTokenContractProxy)
+            .get_contract_stats()
+            .returns(ReturnsResultUnmanaged)
+            .run()
+            .await;
+
+        println!("Result: {result_value:?}");
     }
 
 }
