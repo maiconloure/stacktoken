@@ -175,10 +175,10 @@ export interface AnswerData {
   approved: boolean;
 }
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || 
-  'erd1qqqqqqqqqqqqqpgqdgh2z6j2hvr2kmnxz7vl2zxpur3f7luxd8ss95vuaz';
+const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || 
+  'erd1qqqqqqqqqqqqqpgqy527rcxmtjrlq2z70k9mvc42h3uh3vff7q2sfzcfg2';
 
-const NETWORK_API = process.env.REACT_APP_NETWORK_API || 
+const NETWORK_API = import.meta.env.VITE_NETWORK_API || 
   'https://devnet-api.multiversx.com';
 
 export class ContractService {

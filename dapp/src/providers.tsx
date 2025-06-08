@@ -30,9 +30,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <DappProvider
-      environment={process.env.REACT_APP_ENVIRONMENT || "devnet"}
+      environment={import.meta.env.VITE_ENVIRONMENT || "devnet"}
       customNetworkConfig={{
-        id: process.env.REACT_APP_CHAIN || "D",
+        id: import.meta.env.VITE_CHAIN || "D",
         name: 'MultiversX',
         apiTimeout: 60000,
         egldLabel: "xEGLD",
@@ -40,13 +40,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
         digits: "4",
         gasPerDataByte: "1500",
         walletConnectDeepLink:
-          process.env.REACT_APP_CONNECTION_DEEP_LINK || "https://maiar.page.link/?apn=com.elrond.maiar.wallet&isi=1519405832&ibi=com.elrond.maiar.wallet&link=https://xportal.com/",
+          import.meta.env.VITE_CONNECTION_DEEP_LINK || "https://maiar.page.link/?apn=com.elrond.maiar.wallet&isi=1519405832&ibi=com.elrond.maiar.wallet&link=https://xportal.com/",
         walletConnectBridgeAddresses: ["https://bridge.walletconnect.org"],
-        walletAddress: process.env.REACT_APP_WALLET_ADDRESS || "https://devnet-wallet.multiversx.com/dapp/init",
-        apiAddress: process.env.REACT_APP_NETWORK_API || "https://devnet-api.multiversx.com",
-        explorerAddress: process.env.REACT_APP_EXPLORER_ADDRESS || "http://devnet-explorer.multiversx.com",
-        chainId: process.env.REACT_APP_CHAIN || "D",
-        walletConnectV2ProjectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || "",
+        walletAddress: import.meta.env.VITE_WALLET_ADDRESS || "https://devnet-wallet.multiversx.com/dapp/init",
+        apiAddress: import.meta.env.VITE_NETWORK_API || "https://devnet-api.multiversx.com",
+        explorerAddress: import.meta.env.VITE_EXPLORER_ADDRESS || "http://devnet-explorer.multiversx.com",
+        chainId: import.meta.env.VITE_CHAIN || "D",
+        walletConnectV2ProjectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || "",
       }}
       dappConfig={{
         shouldUseWebViewProvider: true,

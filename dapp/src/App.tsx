@@ -9,6 +9,7 @@ import Questions from "./pages/Questions";
 import AskQuestion from "./pages/AskQuestion";
 import NotFound from "./pages/NotFound";
 import { Providers } from "./providers";
+import 'dotenv/config'
 import "./lib/i18n";
 
 const queryClient = new QueryClient();
